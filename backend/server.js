@@ -21,10 +21,10 @@ mongoose.connect(MONGO_URI)
 
 const Task = require("./models/Task");
 
-// GET all tasks
+// GET all tasks — sorted by order, then createdAt
 app.get("/tasks", async (req, res) => {
   try {
-    const tasks = await Task.find().sort({ createdAt: -1 });
+    const tasks = await Task.find().sort({ order: 1, createdAt: -1 });
     res.json(tasks);
   } catch (e) { res.status(500).json({ message: "Failed to fetch tasks", e }); }
 });
@@ -32,7 +32,10 @@ app.get("/tasks", async (req, res) => {
 // POST add task
 app.post("/add", async (req, res) => {
   try {
-    const task = new Task(req.body);
+    // Assign the new task the lowest order (top of list)
+    const minOrder = await Task.findOne().sort({ order: 1 }).select("order");
+    const order = minOrder ? minOrder.order - 1 : 0;
+    const task = new Task({ ...req.body, order });
     await task.save();
     res.status(201).json(task);
   } catch (e) { res.status(500).json({ message: "Failed to add task", e }); }
@@ -49,7 +52,7 @@ app.patch("/tasks/:id/toggle", async (req, res) => {
   } catch (e) { res.status(500).json({ message: "Failed to toggle task", e }); }
 });
 
-// PATCH update task (text, category, reminderAt)
+// PATCH update task (text, category, priority, dueDate, reminderAt)
 app.patch("/tasks/:id", async (req, res) => {
   try {
     const task = await Task.findByIdAndUpdate(
@@ -68,4 +71,25 @@ app.delete("/tasks/:id", async (req, res) => {
     await Task.findByIdAndDelete(req.params.id);
     res.json({ message: "Deleted" });
   } catch (e) { res.status(500).json({ message: "Failed to delete task", e }); }
+});
+
+// DELETE all completed tasks
+app.delete("/tasks/completed/all", async (req, res) => {
+  try {
+    const result = await Task.deleteMany({ completed: true });
+    res.json({ message: "Cleared", deleted: result.deletedCount });
+  } catch (e) { res.status(500).json({ message: "Failed to clear completed", e }); }
+});
+
+// PATCH reorder tasks — body: [{ id, order }, ...]
+app.patch("/tasks/reorder/bulk", async (req, res) => {
+  try {
+    const updates = req.body; // [{ id, order }]
+    await Promise.all(
+      updates.map(({ id, order }) =>
+        Task.findByIdAndUpdate(id, { $set: { order } })
+      )
+    );
+    res.json({ message: "Reordered" });
+  } catch (e) { res.status(500).json({ message: "Failed to reorder tasks", e }); }
 });

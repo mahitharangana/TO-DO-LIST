@@ -15,9 +15,22 @@ const taskSchema = new mongoose.Schema({
     enum: ["Personal", "Work", "Study", "Health", "Shopping"],
     default: "Personal",
   },
+  priority: {
+    type: String,
+    enum: ["High", "Medium", "Low"],
+    default: "Medium",
+  },
+  dueDate: {
+    type: Date,
+    default: null,
+  },
   reminderAt: {
     type: Date,
     default: null,
+  },
+  order: {
+    type: Number,
+    default: 0,
   },
   createdAt: {
     type: Date,
