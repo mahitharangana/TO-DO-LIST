@@ -3,9 +3,12 @@
 A beautifully designed, full-stack To-Do list built using the MERN stack (MongoDB, Express.js, React.js, Node.js) as part of Task 2.
 
 ## Features
-- **Create Tasks**: Add new tasks seamlessly to your to-do list.
-- **Read Tasks**: View all your existing tasks, instantly fetched from the cloud database.
-- **Modern UI**: Features a sleek dark mode with glassmorphism design and micro-animations.
+- **Full CRUD Functionality**: Create, Read, Update, and Delete tasks instantly.
+- **Categories & Priorities**: Organize your tasks by category (Personal, Work, etc.) and priority (High, Medium, Low).
+- **Drag & Drop Reordering**: Easily reorder tasks by dragging and dropping them into place.
+- **Due Dates & Reminders**: Set due dates and browser notifications for your tasks.
+- **Progress Tracking**: See a visual progress ring of your completed tasks.
+- **Modern UI**: Features a sleek light/dark mode with glassmorphism design, micro-animations, and confetti celebrations.
 - **Responsive**: Works and looks great on all device sizes.
 
 ## Technologies Used
