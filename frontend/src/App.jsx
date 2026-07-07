@@ -10,23 +10,24 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
-const API = "http://localhost:5000";
+const API = "https://to-do-list-4q2w.onrender.com";
+
 
 const CATEGORIES = ["Personal", "Work", "Study", "Health", "Shopping"];
-const FILTERS    = ["All", ...CATEGORIES];
+const FILTERS = ["All", ...CATEGORIES];
 
 const CAT = {
   Personal: { emoji: "🧘", color: "#10b981", bg: "rgba(16,185,129,0.1)" },
-  Work:     { emoji: "💼", color: "#64748b", bg: "rgba(100,116,139,0.1)" },
-  Study:    { emoji: "📚", color: "#9B7653", bg: "rgba(155,118,83,0.12)" },
-  Health:   { emoji: "🏃", color: "#10b981", bg: "rgba(16,185,129,0.1)" },
+  Work: { emoji: "💼", color: "#64748b", bg: "rgba(100,116,139,0.1)" },
+  Study: { emoji: "📚", color: "#9B7653", bg: "rgba(155,118,83,0.12)" },
+  Health: { emoji: "🏃", color: "#10b981", bg: "rgba(16,185,129,0.1)" },
   Shopping: { emoji: "🛒", color: "#6b7280", bg: "rgba(107,114,128,0.1)" },
 };
 
 const PRIORITY = {
-  High:   { emoji: "!", color: "#dc2626", bg: "rgba(220,38,38,0.1)",   label: "High" },
+  High: { emoji: "!", color: "#dc2626", bg: "rgba(220,38,38,0.1)", label: "High" },
   Medium: { emoji: "·", color: "#6B7280", bg: "rgba(107,114,128,0.1)", label: "Medium" },
-  Low:    { emoji: "·", color: "#10b981", bg: "rgba(16,185,129,0.1)",  label: "Low" },
+  Low: { emoji: "·", color: "#10b981", bg: "rgba(16,185,129,0.1)", label: "Low" },
 };
 
 const QUOTES = [
@@ -41,9 +42,9 @@ const QUOTES = [
 ];
 
 const MILESTONES = {
-  1:  "First task added! 🎉",
-  3:  "3 tasks — you're organized!",
-  5:  "5 tasks — keep it up!",
+  1: "First task added! 🎉",
+  3: "3 tasks — you're organized!",
+  5: "5 tasks — keep it up!",
   10: "10 tasks — you're a legend!",
 };
 
@@ -100,7 +101,7 @@ function playChime() {
     gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.6);
     osc.start(ctx.currentTime);
     osc.stop(ctx.currentTime + 0.6);
-  } catch (_) {}
+  } catch (_) { }
 }
 
 function fireConfetti() {
@@ -136,11 +137,11 @@ function SortableTaskItem({ task, onToggle, onDelete, onEdit, onSaveEdit, onSetR
     zIndex: isDragging ? 999 : "auto",
   };
 
-  const meta    = CAT[task.category] || CAT.Personal;
-  const prio    = PRIORITY[task.priority] || PRIORITY.Medium;
-  const isEditing  = editingId === task._id;
+  const meta = CAT[task.category] || CAT.Personal;
+  const prio = PRIORITY[task.priority] || PRIORITY.Medium;
+  const isEditing = editingId === task._id;
   const isRemoving = removingId === task._id;
-  const overdue    = isOverdue(task);
+  const overdue = isOverdue(task);
 
   return (
     <li
@@ -219,27 +220,27 @@ function SortableTaskItem({ task, onToggle, onDelete, onEdit, onSaveEdit, onSetR
 
 // ── Main App ────────────────────────────────────────────────────────────────
 export default function App() {
-  const [tasks,       setTasks]      = useState([]);
-  const [text,        setText]       = useState("");
-  const [category,    setCategory]   = useState("Personal");
-  const [priority,    setPriority]   = useState("Medium");
-  const [dueDate,     setDueDate]    = useState("");
-  const [filter,      setFilter]     = useState("All");
-  const [search,      setSearch]     = useState("");
-  const [loading,     setLoading]    = useState(true);
-  const [adding,      setAdding]     = useState(false);
-  const [error,       setError]      = useState(null);
-  const [toast,       setToast]      = useState(null);
-  const [shake,       setShake]      = useState(false);
-  const [editingId,   setEditingId]  = useState(null);
-  const [editText,    setEditText]   = useState("");
-  const [quoteIdx,    setQuoteIdx]   = useState(0);
-  const [allDone,     setAllDone]    = useState(false);
-  const [removingId,  setRemovingId] = useState(null);
-  const [darkMode,    setDarkMode]   = useState(() => localStorage.getItem("doable-dark") === "true");
-  const prevDoneCount   = useRef(0);
-  const tasksRef        = useRef([]);
-  const firedReminders  = useRef(new Set());
+  const [tasks, setTasks] = useState([]);
+  const [text, setText] = useState("");
+  const [category, setCategory] = useState("Personal");
+  const [priority, setPriority] = useState("Medium");
+  const [dueDate, setDueDate] = useState("");
+  const [filter, setFilter] = useState("All");
+  const [search, setSearch] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [adding, setAdding] = useState(false);
+  const [error, setError] = useState(null);
+  const [toast, setToast] = useState(null);
+  const [shake, setShake] = useState(false);
+  const [editingId, setEditingId] = useState(null);
+  const [editText, setEditText] = useState("");
+  const [quoteIdx, setQuoteIdx] = useState(0);
+  const [allDone, setAllDone] = useState(false);
+  const [removingId, setRemovingId] = useState(null);
+  const [darkMode, setDarkMode] = useState(() => localStorage.getItem("doable-dark") === "true");
+  const prevDoneCount = useRef(0);
+  const tasksRef = useRef([]);
+  const firedReminders = useRef(new Set());
 
   // Keep tasksRef always in sync without affecting intervals
   useEffect(() => { tasksRef.current = tasks; }, [tasks]);
@@ -311,7 +312,7 @@ export default function App() {
       const res = await axios.get(`${API}/tasks`);
       setTasks(res.data);
     } catch { setError("Can't reach the server. Is the backend running?"); }
-    finally  { setLoading(false); }
+    finally { setLoading(false); }
   };
 
   useEffect(() => { fetchTasks(); }, []);
@@ -330,7 +331,7 @@ export default function App() {
       if (MILESTONES[newTotal]) showToast(MILESTONES[newTotal], "milestone");
       else showToast("Task added", "success");
     } catch { setError("Failed to add task."); }
-    finally  { setAdding(false); }
+    finally { setAdding(false); }
   };
 
   const handleToggle = async (id) => {
@@ -386,7 +387,7 @@ export default function App() {
       const newIdx = prev.findIndex(t => t._id === over.id);
       const reordered = arrayMove(prev, oldIdx, newIdx);
       const updates = reordered.map((t, i) => ({ id: t._id, order: i }));
-      axios.patch(`${API}/tasks/reorder/bulk`, updates).catch(() => {});
+      axios.patch(`${API}/tasks/reorder/bulk`, updates).catch(() => { });
       return reordered;
     });
   };
@@ -397,11 +398,11 @@ export default function App() {
       t.text.toLowerCase().includes(search.toLowerCase())
     ), [tasks, filter, search]);
 
-  const total   = tasks.length;
-  const done    = tasks.filter(t => t.completed).length;
+  const total = tasks.length;
+  const done = tasks.filter(t => t.completed).length;
   const pending = total - done;
   const overdueCount = tasks.filter(t => isOverdue(t)).length;
-  const pct     = total > 0 ? Math.round((done / total) * 100) : 0;
+  const pct = total > 0 ? Math.round((done / total) * 100) : 0;
   const catCounts = CATEGORIES.reduce((acc, c) => {
     acc[c] = tasks.filter(t => t.category === c).length;
     return acc;
@@ -448,7 +449,7 @@ export default function App() {
         {/* Progress ring */}
         <div className="progress-ring-wrap">
           <svg viewBox="0 0 100 100" className="ring-svg">
-            <circle className="ring-bg" cx="50" cy="50" r="40"/>
+            <circle className="ring-bg" cx="50" cy="50" r="40" />
             <circle className="ring-fill" cx="50" cy="50" r="40"
               strokeDasharray={`${2 * Math.PI * 40}`}
               strokeDashoffset={`${2 * Math.PI * 40 * (1 - pct / 100)}`}
@@ -487,7 +488,7 @@ export default function App() {
           {CATEGORIES.map(c => (
             <button key={c} className={`cat-item ${filter === c ? "active" : ""}`}
               onClick={() => setFilter(filter === c ? "All" : c)}>
-              <span className="cat-dot" style={{ background: CAT[c].color }}/>
+              <span className="cat-dot" style={{ background: CAT[c].color }} />
               <span>{CAT[c].emoji} {c}</span>
               <span className="cat-count">{catCounts[c] || 0}</span>
             </button>
@@ -514,7 +515,7 @@ export default function App() {
             <div className="search-wrap">
               <span className="search-icon">⌕</span>
               <input type="text" value={search} onChange={e => setSearch(e.target.value)}
-                placeholder="Search…" className="search-input"/>
+                placeholder="Search…" className="search-input" />
               {search && <button className="search-clear" onClick={() => setSearch("")}>✕</button>}
             </div>
           </div>
@@ -525,7 +526,7 @@ export default function App() {
         {/* Add Form */}
         <form onSubmit={handleAdd} className={`add-form ${shake ? "shake" : ""}`}>
           <input type="text" value={text} onChange={e => setText(e.target.value)}
-            placeholder="Add a task…" disabled={adding} className="add-input"/>
+            placeholder="Add a task…" disabled={adding} className="add-input" />
           <select value={priority} onChange={e => setPriority(e.target.value)}
             disabled={adding} className="add-select"
             style={{ borderLeft: `3px solid ${PRIORITY[priority].color}` }}>
@@ -539,7 +540,7 @@ export default function App() {
             disabled={adding} className="add-date"
             min={new Date().toISOString().split("T")[0]} />
           <button id="add-task-btn" type="submit" disabled={adding || !text.trim()}>
-            {adding ? <span className="btn-spin"/> : "+ Add"}
+            {adding ? <span className="btn-spin" /> : "+ Add"}
           </button>
         </form>
 
@@ -557,7 +558,7 @@ export default function App() {
         {/* Task List */}
         <section className="task-section">
           {loading ? (
-            <div className="state-box"><div className="spinner"/><p>Loading…</p></div>
+            <div className="state-box"><div className="spinner" /><p>Loading…</p></div>
           ) : filtered.length === 0 ? (
             <div className="state-box">
               <p className="empty-emoji">{search ? "⌕" : "○"}</p>
