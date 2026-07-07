@@ -78,6 +78,13 @@ function formatDueDate(dueDate) {
   return `Due ${d.toLocaleDateString("en-US", { month: "short", day: "numeric" })}`;
 }
 
+function formatLocalForInput(dateStr) {
+  if (!dateStr) return "";
+  const d = new Date(dateStr);
+  const pad = n => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
 function playChime() {
   try {
     const ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -198,7 +205,7 @@ function SortableTaskItem({ task, onToggle, onDelete, onEdit, onSaveEdit, onSetR
         <label className="action-btn reminder-btn" title="Set Reminder">
           ⏰
           <input type="datetime-local" className="hidden-dt"
-            value={task.reminderAt ? new Date(task.reminderAt).toISOString().slice(0, 16) : ""}
+            value={formatLocalForInput(task.reminderAt)}
             onChange={e => onSetReminder(task._id, e.target.value)} />
         </label>
         <button className="action-btn edit-btn" title="Edit"
@@ -272,9 +279,14 @@ export default function App() {
           const diff = now - new Date(t.reminderAt);
           if (diff >= 0 && diff < 60000) {          // 60-second catch window
             firedReminders.current.add(key);        // mark as fired — never repeats
-            if (Notification.permission === "granted") {
-              new Notification("⏰ Reminder", { body: t.text });
+            try {
+              if (Notification.permission === "granted") {
+                new Notification("⏰ Reminder", { body: t.text });
+              }
+            } catch (err) {
+              console.warn("Notification error:", err);
             }
+            playChime();
             showToast(`⏰ Reminder: "${t.text}"`, "reminder");
           }
         }
