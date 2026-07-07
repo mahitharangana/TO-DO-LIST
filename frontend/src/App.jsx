@@ -342,11 +342,22 @@ export default function App() {
   };
 
   const handleToggle = async (id) => {
+    const task = tasks.find(t => t._id === id);
+    if (!task) return;
+    const isCompleting = !task.completed;
+    
+    // Optimistic update
+    setTasks(p => p.map(t => t._id === id ? { ...t, completed: isCompleting } : t));
+    if (isCompleting) { fireConfetti(); playChime(); showToast("Done! ✓", "success"); }
+
     try {
       const res = await axios.patch(`${API}/tasks/${id}/toggle`);
       setTasks(p => p.map(t => t._id === id ? res.data : t));
-      if (res.data.completed) { fireConfetti(); playChime(); showToast("Done! ✓", "success"); }
-    } catch { setError("Failed to update task."); }
+    } catch {
+      // Revert on failure
+      setTasks(p => p.map(t => t._id === id ? { ...t, completed: !isCompleting } : t));
+      setError("Failed to update task.");
+    }
   };
 
   const handleDelete = async (id) => {
