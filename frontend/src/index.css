@@ -454,18 +454,16 @@ html.dark .sidebar-footer { color: #505050; }
 }
 .sound-toggle-main:hover { border-color: var(--accent); color: var(--accent); }
 
-/* ══ TOUCH ERGONOMICS (44px min targets) ══ */
-.add-input, .add-select, .add-date, #add-task-btn,
-.cb, .action-btn, .ftab, .cat-item {
-  min-height: 44px;
-}
-.cb { min-width: 44px; }
-.action-btn { min-width: 44px; }
-.cat-item { padding: 0.8rem 0.6rem; }
-.dark-toggle { min-width: 44px; min-height: 44px; }
-
 /* ══ MOBILE RESPONSIVENESS ══ */
 @media (max-width: 768px) {
+  /* TOUCH ERGONOMICS */
+  .add-input, .add-select, .add-date, #add-task-btn,
+  .cb, .action-btn, .ftab, .cat-item { min-height: 44px; }
+  .cb { min-width: 44px; }
+  .action-btn { min-width: 44px; }
+  .cat-item { padding: 0.8rem 0.6rem; }
+  .dark-toggle { min-width: 44px; min-height: 44px; }
+
   .root { display: flex; flex-direction: column; overflow: hidden; height: 100vh; }
   .main { padding: 1rem; flex: 1; overflow-y: auto; overflow-x: hidden; }
   
