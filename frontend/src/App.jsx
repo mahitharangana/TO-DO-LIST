@@ -10,7 +10,7 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
-const API = "https://to-do-list-4q2w.onrender.com";
+const API = "https://doable-w68m.onrender.com";
 
 
 const CATEGORIES = ["Personal", "Work", "Study", "Health", "Shopping"];
