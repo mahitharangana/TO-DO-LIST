@@ -416,3 +416,24 @@ html.dark .ring-sub     { color: #808080; }
 html.dark .sstat-lbl    { color: #808080; }
 html.dark .cat-nav-title { color: #707070; }
 html.dark .sidebar-footer { color: #505050; }
+
+/* ══ MOBILE RESPONSIVENESS ══ */
+@media (max-width: 768px) {
+  .root { flex-direction: column; overflow-y: auto; overflow-x: hidden; }
+  .sidebar { width: 100%; border-right: none; border-bottom: var(--sidebar-border); padding: 1rem; max-height: 45vh; overflow-y: auto; }
+  .main { padding: 1rem; flex: 1; overflow-y: visible; }
+  
+  .topbar { flex-direction: column; align-items: stretch; gap: 1rem; }
+  .topbar-right { justify-content: space-between; }
+  .search-wrap { flex: 1; margin-left: 0.5rem; }
+  .search-input { width: 100%; }
+  
+  .add-form { flex-direction: column; gap: 0.8rem; }
+  .add-input, .add-select, .add-date, #add-task-btn { width: 100%; }
+  
+  .filter-row { overflow-x: auto; flex-wrap: nowrap; padding-bottom: 0.5rem; }
+  .ftab { flex-shrink: 0; }
+  
+  .task-list { grid-template-columns: 1fr; }
+  .all-done-banner { width: 90%; padding: 1.5rem; }
+}

@@ -237,7 +237,10 @@ export default function App() {
   const [quoteIdx, setQuoteIdx] = useState(0);
   const [allDone, setAllDone] = useState(false);
   const [removingId, setRemovingId] = useState(null);
-  const [darkMode, setDarkMode] = useState(() => localStorage.getItem("doable-dark") === "true");
+  const [darkMode, setDarkMode] = useState(() => {
+    const saved = localStorage.getItem("doable-dark");
+    return saved !== null ? saved === "true" : true; // Default to true (Dark Mode)
+  });
   const prevDoneCount = useRef(0);
   const tasksRef = useRef([]);
   const firedReminders = useRef(new Set());
