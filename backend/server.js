@@ -2,6 +2,7 @@ require("dotenv").config();
 const express  = require("express");
 const mongoose = require("mongoose");
 const cors     = require("cors");
+const path     = require("path");
 
 const app = express();
 app.use(cors());
@@ -93,3 +94,10 @@ app.patch("/tasks/reorder/bulk", async (req, res) => {
     res.json({ message: "Reordered" });
   } catch (e) { res.status(500).json({ message: "Failed to reorder tasks", e }); }
 });
+
+// Serve frontend in production
+app.use(express.static(path.join(__dirname, "../frontend/dist")));
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "../frontend/dist/index.html"));
+});
+

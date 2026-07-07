@@ -10,8 +10,7 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
-const API = "https://doable-w68m.onrender.com";
-
+const API = import.meta.env.PROD ? "" : "http://localhost:5000";
 
 const CATEGORIES = ["Personal", "Work", "Study", "Health", "Shopping"];
 const FILTERS = ["All", ...CATEGORIES];
@@ -87,6 +86,7 @@ function formatLocalForInput(dateStr) {
 }
 
 function playChime() {
+  if (localStorage.getItem("doable-sound") === "false") return;
   try {
     const ctx = new (window.AudioContext || window.webkitAudioContext)();
     const osc = ctx.createOscillator();
@@ -241,9 +241,13 @@ export default function App() {
     const saved = localStorage.getItem("doable-dark");
     return saved !== null ? saved === "true" : true; // Default to true (Dark Mode)
   });
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+  const [soundEnabled, setSoundEnabled] = useState(() => localStorage.getItem("doable-sound") !== "false");
   const prevDoneCount = useRef(0);
   const tasksRef = useRef([]);
   const firedReminders = useRef(new Set());
+
+  useEffect(() => { localStorage.setItem("doable-sound", soundEnabled); }, [soundEnabled]);
 
   // Keep tasksRef always in sync without affecting intervals
   useEffect(() => { tasksRef.current = tasks; }, [tasks]);
@@ -430,14 +434,18 @@ export default function App() {
       {toast && <div className={`toast toast-${toast.type}`}>{toast.msg}</div>}
 
       {/* ══ SIDEBAR ══ */}
-      <aside className="sidebar">
+      {mobileSidebarOpen && <div className="sidebar-overlay" onClick={() => setMobileSidebarOpen(false)} />}
+      <aside className={`sidebar ${mobileSidebarOpen ? "open" : ""}`}>
         {/* Brand */}
         <div className="brand">
           <span className="brand-name">Doable</span>
-          <button className="dark-toggle" onClick={() => setDarkMode(d => !d)}
-            title={darkMode ? "Light mode" : "Dark mode"}>
-            {darkMode ? "☀" : "◑"}
-          </button>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+            <button className="dark-toggle" onClick={() => setDarkMode(d => !d)}
+              title={darkMode ? "Light mode" : "Dark mode"}>
+              {darkMode ? "☀" : "◑"}
+            </button>
+            <button className="mobile-close-btn" onClick={() => setMobileSidebarOpen(false)}>✕</button>
+          </div>
         </div>
         <p className="brand-tagline">— Do more. Miss nothing.</p>
 
@@ -490,7 +498,7 @@ export default function App() {
           <p className="cat-nav-title">Categories</p>
           {CATEGORIES.map(c => (
             <button key={c} className={`cat-item ${filter === c ? "active" : ""}`}
-              onClick={() => setFilter(filter === c ? "All" : c)}>
+              onClick={() => { setFilter(filter === c ? "All" : c); setMobileSidebarOpen(false); }}>
               <span className="cat-dot" style={{ background: CAT[c].color }} />
               <span>{CAT[c].emoji} {c}</span>
               <span className="cat-count">{catCounts[c] || 0}</span>
@@ -505,6 +513,7 @@ export default function App() {
       <main className="main">
         <header className="topbar">
           <div className="topbar-left">
+            <button className="mobile-menu-btn" onClick={() => setMobileSidebarOpen(true)}>☰</button>
             <h2 className="page-title">My Tasks</h2>
             {!loading && <span className="task-pill">{filtered.length}</span>}
             {overdueCount > 0 && <span className="overdue-pill">⚠ {overdueCount} overdue</span>}
@@ -515,11 +524,17 @@ export default function App() {
                 Clear done ({done})
               </button>
             )}
-            <div className="search-wrap">
-              <span className="search-icon">⌕</span>
-              <input type="text" value={search} onChange={e => setSearch(e.target.value)}
-                placeholder="Search…" className="search-input" />
-              {search && <button className="search-clear" onClick={() => setSearch("")}>✕</button>}
+            <div className="topbar-actions-mobile">
+              <button className="sound-toggle-main" onClick={() => setSoundEnabled(s => !s)}
+                title={soundEnabled ? "Mute sound" : "Enable sound"}>
+                {soundEnabled ? "🔊" : "🔇"}
+              </button>
+              <div className="search-wrap">
+                <span className="search-icon">⌕</span>
+                <input type="text" value={search} onChange={e => setSearch(e.target.value)}
+                  placeholder="Search…" className="search-input" />
+                {search && <button className="search-clear" onClick={() => setSearch("")}>✕</button>}
+              </div>
             </div>
           </div>
         </header>
