@@ -56,6 +56,13 @@ html.dark {
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* Custom Scrollbar */
+* { scrollbar-width: thin; scrollbar-color: var(--border) var(--bg-page); }
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: var(--bg-page); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
 html {
   font-size: 14px;
   -webkit-font-smoothing: antialiased;
