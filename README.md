@@ -1,4 +1,4 @@
-# MERN Stack To-Do List Application -- Doable
+# To-Do List Application -- Doable
 
 **Live Demo:** [https://doable-w68m.onrender.com](https://doable-w68m.onrender.com)
 
