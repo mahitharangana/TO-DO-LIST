@@ -1,8 +1,8 @@
-# MERN Stack To-Do List Application
+# MERN Stack To-Do List Application -- Doable
 
-**Live Demo:** [https://doable-tasks.onrender.com](https://doable-tasks.onrender.com)
+**Live Demo:** [https://doable-w68m.onrender.com](https://doable-w68m.onrender.com)
 
-A beautifully designed, full-stack To-Do list built using the MERN stack (MongoDB, Express.js, React.js, Node.js) as part of Task 2.
+A beautifully designed, full-stack To-Do list built using the MERN stack (MongoDB, Express.js, React.js, Node.js) as part of Task 2 of my internship.
 
 ## Features
 - **Full CRUD Functionality**: Create, Read, Update, and Delete tasks instantly.
