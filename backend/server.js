@@ -53,6 +53,17 @@ app.patch("/tasks/:id/toggle", async (req, res) => {
   } catch (e) { res.status(500).json({ message: "Failed to toggle task", e }); }
 });
 
+// PATCH pin/unpin task
+app.patch("/tasks/:id/pin", async (req, res) => {
+  try {
+    const task = await Task.findById(req.params.id);
+    if (!task) return res.status(404).json({ message: "Not found" });
+    task.pinned = !task.pinned;
+    await task.save();
+    res.json(task);
+  } catch (e) { res.status(500).json({ message: "Failed to pin task", e }); }
+});
+
 // PATCH update task (text, category, priority, dueDate, reminderAt)
 app.patch("/tasks/:id", async (req, res) => {
   try {

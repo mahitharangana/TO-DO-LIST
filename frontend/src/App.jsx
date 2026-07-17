@@ -125,7 +125,7 @@ function fireAllDoneConfetti() {
 }
 
 // ── Sortable Task Item ──────────────────────────────────────────────────────
-function SortableTaskItem({ task, onToggle, onDelete, onEdit, onSaveEdit, onSetReminder, editingId, editText, setEditText, removingId }) {
+function SortableTaskItem({ task, onToggle, onDelete, onEdit, onSaveEdit, onSetReminder, onPin, editingId, editText, setEditText, removingId }) {
   const {
     attributes, listeners, setNodeRef, transform, transition, isDragging,
   } = useSortable({ id: task._id });
@@ -147,7 +147,7 @@ function SortableTaskItem({ task, onToggle, onDelete, onEdit, onSaveEdit, onSetR
     <li
       ref={setNodeRef}
       style={{ ...style, "--accent-c": prio.color }}
-      className={`task-item ${task.completed ? "item-done" : ""} ${isRemoving ? "item-removing" : ""} ${overdue ? "item-overdue" : ""}`}
+      className={`task-item ${task.completed ? "item-done" : ""} ${isRemoving ? "item-removing" : ""} ${overdue ? "item-overdue" : ""} ${task.pinned ? "item-pinned" : ""}`}
     >
       {/* Priority stripe */}
       <span className="priority-stripe" style={{ background: prio.color }} />
@@ -177,6 +177,8 @@ function SortableTaskItem({ task, onToggle, onDelete, onEdit, onSaveEdit, onSetR
           </span>
         )}
         <div className="item-tags-row">
+          {task.pinned && <span className="item-tag pin-badge">📌 Pinned</span>}
+          {task.pinned && <span className="tag-sep">·</span>}
           <span className="item-tag prio-tag" style={{ color: prio.color }}>
             {task.priority}
           </span>
@@ -203,6 +205,11 @@ function SortableTaskItem({ task, onToggle, onDelete, onEdit, onSaveEdit, onSetR
 
       {/* Actions */}
       <div className="task-actions">
+        <button
+          className={`action-btn pin-btn ${task.pinned ? "pin-btn-active" : ""}`}
+          title={task.pinned ? "Unpin task" : "Pin to top"}
+          onClick={() => onPin(task._id)}
+        >{task.pinned ? "★" : "☆"}</button>
         <label className="action-btn reminder-btn" title="Set Reminder">
           ⏰
           <input type="datetime-local" className="hidden-dt"
@@ -389,6 +396,22 @@ export default function App() {
     } catch { setError("Failed to set reminder."); }
   };
 
+  const handlePin = async (id) => {
+    const task = tasks.find(t => t._id === id);
+    if (!task) return;
+    // Optimistic update
+    setTasks(p => p.map(t => t._id === id ? { ...t, pinned: !t.pinned } : t));
+    try {
+      const res = await axios.patch(`${API}/tasks/${id}/pin`);
+      setTasks(p => p.map(t => t._id === id ? res.data : t));
+      showToast(res.data.pinned ? "📌 Task pinned!" : "Unpinned", "success");
+    } catch {
+      // Revert on failure
+      setTasks(p => p.map(t => t._id === id ? { ...t, pinned: task.pinned } : t));
+      setError("Failed to pin task.");
+    }
+  };
+
   const handleClearCompleted = async () => {
     try {
       await axios.delete(`${API}/tasks/completed/all`);
@@ -410,11 +433,14 @@ export default function App() {
     });
   };
 
-  const filtered = useMemo(() =>
-    tasks.filter(t =>
+  const filtered = useMemo(() => {
+    const list = tasks.filter(t =>
       (filter === "All" || t.category === filter) &&
       t.text.toLowerCase().includes(search.toLowerCase())
-    ), [tasks, filter, search]);
+    );
+    // Pinned tasks always appear first
+    return [...list.filter(t => t.pinned), ...list.filter(t => !t.pinned)];
+  }, [tasks, filter, search]);
 
   const total = tasks.length;
   const done = tasks.filter(t => t.completed).length;
@@ -602,7 +628,7 @@ export default function App() {
                     <SortableTaskItem key={t._id} task={t}
                       onToggle={handleToggle} onDelete={handleDelete}
                       onEdit={(id) => setEditingId(id)} onSaveEdit={handleSaveEdit}
-                      onSetReminder={handleSetReminder}
+                      onSetReminder={handleSetReminder} onPin={handlePin}
                       editingId={editingId} editText={editText} setEditText={setEditText}
                       removingId={removingId} />
                   ))}

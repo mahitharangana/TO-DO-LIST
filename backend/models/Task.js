@@ -28,6 +28,10 @@ const taskSchema = new mongoose.Schema({
     type: Date,
     default: null,
   },
+  pinned: {
+    type: Boolean,
+    default: false,
+  },
   order: {
     type: Number,
     default: 0,
